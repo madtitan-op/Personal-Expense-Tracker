@@ -1,6 +1,5 @@
 package com.expense.tracker.service;
 
-import com.expense.tracker.dto.UserRequestDTO;
 import com.expense.tracker.model.User;
 import com.expense.tracker.repository.UserRepo;
 import jakarta.persistence.EntityExistsException;

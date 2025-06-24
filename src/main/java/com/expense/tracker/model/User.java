@@ -18,12 +18,13 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
+    @Column(length = 15)
     private String username;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10)
     private String role;
 
     @Override
