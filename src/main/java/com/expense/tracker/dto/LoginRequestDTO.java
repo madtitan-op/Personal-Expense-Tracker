@@ -1,6 +1,6 @@
 package com.expense.tracker.dto;
 
-public record AuthenticationRequestDTO(
+public record LoginRequestDTO(
         String username,
         String password
 ) {

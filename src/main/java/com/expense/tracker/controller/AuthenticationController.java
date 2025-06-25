@@ -1,7 +1,7 @@
 package com.expense.tracker.controller;
 
-import com.expense.tracker.dto.AuthenticationRequestDTO;
-import com.expense.tracker.model.User;
+import com.expense.tracker.dto.LoginRequestDTO;
+import com.expense.tracker.dto.RegistrationRequestDTO;
 import com.expense.tracker.service.JwtService;
 import com.expense.tracker.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "409", description = "User already exists")
     })
     @PostMapping("register")
-    public ResponseEntity<?> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody RegistrationRequestDTO user) {
         try {
             userService.register(user);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -54,7 +54,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "401", description = "Invalid Credentials")
     })
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody AuthenticationRequestDTO authReq) {
+    public ResponseEntity<String> login(@RequestBody LoginRequestDTO authReq) {
         try {
             Authentication authentication = authMgr
                     .authenticate(new UsernamePasswordAuthenticationToken(authReq.username(), authReq.password()));
