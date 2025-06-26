@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal Expense Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+      <div class="loader"></div>
+      <p>Loading...</p>
+    </div>
+
+    <!-- Authentication Section -->
+    <div id="auth-section" class="auth-section">
+      <div class="auth-container">
+        <div class="auth-header">
+          <h1><i class="fas fa-wallet"></i> Expense Tracker</h1>
+          <p>Manage your personal finances efficiently</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="auth-form">
+          <h2>Login</h2>
+          <div class="form-group">
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" required />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+          <p class="auth-switch">
+            Don't have an account? <a href="#" id="show-register">Register</a>
+          </p>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" class="auth-form hidden">
+          <h2>Register</h2>
+          <div class="form-group">
+            <label for="register-username">Username</label>
+            <input type="text" id="register-username" required />
+          </div>
+          <div class="form-group">
+            <label for="register-password">Password</label>
+            <input type="password" id="register-password" required />
+          </div>
+          <div class="form-group">
+            <label for="register-role">Role</label>
+            <select id="register-role" required>
+              <option value="USER">User</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Register</button>
+          <p class="auth-switch">
+            Already have an account? <a href="#" id="show-login">Login</a>
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app hidden">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+          <h1><i class="fas fa-wallet"></i> Expense Tracker</h1>
+          <div class="header-actions">
+            <span id="user-info" class="user-info"></span>
+            <button id="logout-btn" class="btn btn-secondary">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Navigation -->
+      <nav class="nav">
+        <button class="nav-item active" data-section="dashboard">
+          <i class="fas fa-chart-pie"></i> Dashboard
+        </button>
+        <button class="nav-item" data-section="expenses">
+          <i class="fas fa-receipt"></i> Expenses
+        </button>
+        <button class="nav-item" data-section="categories">
+          <i class="fas fa-tags"></i> Categories
+        </button>
+        <button class="nav-item" data-section="analytics">
+          <i class="fas fa-chart-line"></i> Analytics
+        </button>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+          <div class="section-header">
+            <h2>Dashboard</h2>
+            <p>Overview of your financial status</p>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3>Total Expenses</h3>
+                <i class="fas fa-indian-rupee-sign"></i>
+              </div>
+              <div class="card-content">
+                <span id="total-expenses" class="amount">$0.00</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>This Month</h3>
+                <i class="fas fa-calendar"></i>
+              </div>
+              <div class="card-content">
+                <span id="monthly-expenses" class="amount">$0.00</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Categories</h3>
+                <i class="fas fa-tags"></i>
+              </div>
+              <div class="card-content">
+                <span id="total-categories" class="amount">0</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Recent Expenses</h3>
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="card-content">
+                <span id="recent-count" class="amount">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-charts">
+            <div class="chart-container">
+              <h3>Expenses by Category</h3>
+              <canvas id="dashboard-category-chart" height="180"></canvas>
+            </div>
+
+            <div class="chart-container">
+              <h3>Recent Expenses</h3>
+              <div id="recent-expenses" class="recent-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Expenses Section -->
+        <section id="expenses" class="section">
+          <div class="section-header">
+            <h2>Expenses</h2>
+            <button id="add-expense-btn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Expense
+            </button>
+          </div>
+
+          <div class="filters">
+            <div class="filter-group">
+              <label for="category-filter">Category:</label>
+              <select id="category-filter">
+                <option value="">All Categories</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="date-from">From:</label>
+              <input type="date" id="date-from" />
+            </div>
+            <div class="filter-group">
+              <label for="date-to">To:</label>
+              <input type="date" id="date-to" />
+            </div>
+            <button id="apply-filters" class="btn btn-secondary">
+              Apply Filters
+            </button>
+            <button id="clear-filters" class="btn btn-outline">Clear</button>
+          </div>
+
+          <div class="table-container">
+            <table id="expenses-table" class="table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Amount</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="expenses-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section id="categories" class="section">
+          <div class="section-header">
+            <h2>Categories</h2>
+            <button id="add-category-btn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Category
+            </button>
+          </div>
+
+          <div class="categories-grid" id="categories-grid"></div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="section">
+          <div class="section-header">
+            <h2>Analytics</h2>
+          </div>
+
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <h3>Category Breakdown</h3>
+              <canvas id="category-breakdown-chart" height="200"></canvas>
+            </div>
+
+            <div class="analytics-card">
+              <h3>Monthly Trend</h3>
+              <canvas id="monthly-trend-chart" height="200"></canvas>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add/Edit Expense Modal -->
+    <div id="expense-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="expense-modal-title">Add Expense</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <form id="expense-form">
+          <div class="form-group">
+            <label for="expense-amount">Amount</label>
+            <input type="number" id="expense-amount" step="0.01" required />
+          </div>
+          <div class="form-group">
+            <label for="expense-description">Description</label>
+            <input type="text" id="expense-description" required />
+          </div>
+          <div class="form-group">
+            <label for="expense-date">Date</label>
+            <input type="date" id="expense-date" required />
+          </div>
+          <div class="form-group">
+            <label for="expense-category">Category</label>
+            <select id="expense-category" required></select>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary modal-cancel">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add/Edit Category Modal -->
+    <div id="category-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="category-modal-title">Add Category</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <form id="category-form">
+          <div class="form-group">
+            <label for="category-name">Category Name</label>
+            <input type="text" id="category-name" required />
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary modal-cancel">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Confirm Action</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="confirm-message">
+            Are you sure you want to perform this action?
+          </p>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary modal-cancel">Cancel</button>
+          <button id="confirm-action" class="btn btn-danger">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
