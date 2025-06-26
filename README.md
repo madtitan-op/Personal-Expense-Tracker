@@ -48,6 +48,7 @@ A simple Java Spring Boot application to manage and track your expenses. This pr
   - `index.html` (main page)
   - `styles.css` (styling)
   - `script.js` (frontend logic)
+- Preview: [YouTube](https://youtu.be/1C-lwwLf2Yc)
 
 ### API Documentation with Swagger
 - After starting the application, access Swagger UI at:
